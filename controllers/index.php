@@ -51,15 +51,17 @@ Class Controller_Index Extends Controller_Base {
         echo '</pre>';
           */
          
+        /*
         $heroes = $dota->get_heroes();
-        $dir = D.'/data/portraits';
+        $dir = D.'/data/portraits_webm';
         foreach($heroes AS $hero){
-            $file = $dir.'/npc_dota_hero_'.$hero['name'].'.webm';
-            if(is_file($file)){
-                rename($file, $dir.'/'.$hero['id']);
-                system('sftowebm '.$dir.'/'.$hero['id']);
-            }
+            $file = $dir.'/'.$hero['id'].'.webm';
+            $file1 = D.'/data/portraits_png_50/'.$hero['id'].'.png';
+            //if(is_file($file)){
+            //    system(D.'/ffmpeg -i '.$file.' -an -ss 00:00:02 -r 1 -vframes 1 -s 50x50 -y '.$file1);
+            //}
         }
+        */
         
         $this->des->set('dota',$dota);
         $this->des->display('index');

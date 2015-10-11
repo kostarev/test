@@ -56,9 +56,7 @@
                 <td><?=$val['account_id'];?></td>
                 <td><?=$val['player_slot'];?></td>
                 <td><?=$dota->get_hero_url($val['hero_id']);?>
-                <video autoplay loop>
-                    <source src="/data/portraits/<?=$val['hero_id'];?>.webm" type='video/webm; codecs="vp8, vorbis"'  />
-    </video>
+                    <img src='/data/portraits_png_50/<?=$val['hero_id'];?>.png' alt="<?=$dota->get_hero_url($val['hero_id']);?>"/>
                 </td>
                 <td><?=$val['items'];?></td>
                 <td><?=$val['kills'];?></td>
