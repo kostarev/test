@@ -16,3 +16,6 @@ php_value display_errors 1
 </IfModule>
 
 AddType text/cache-manifest .manifest
+AddType video/ogg .ogv
+AddType video/mp4 .mp4
+AddType video/webm .webm

@@ -1,17 +1,9 @@
 <div>
-
-    cnt: <?=count($match);?>
-    <br />
-
-    <pre>
-        <?print_r($match);?>
-    </pre>
-
+    <div><b>Матч: <?=$match['match_id'];?></b></div>
     <div>
         <?if($match['radiant_win']):?>Победа света
         <?else:?>Победа тьмы<?endif;?>
     </div>
-    <div><b>Матч: <?=$match['match_id'];?></b></div>
     <div>Длительность: <?=Func::sec2human($match['duration']);?></div>
     <div>Начало: <?=Func::unix2human($match['start_time']);?></div>
     <div>Конец: <?=Func::unix2human($match['start_time']+$match['duration']);?></div>
@@ -28,6 +20,9 @@
     <div>negative_votes: <?=$match['negative_votes'];?></div>
     <div>game_mode: <?=$match['game_mode'];?></div>
     <div>engine: <?=$match['engine'];?></div>
+    <div>Запись: <?if($match['replay_salt']):?><a href="http://replay<?=$match['cluster'];?>.valve.net/570/<?=$match['match_id'];?>_<?=$match['replay_salt'];?>.dem.bz2">http://replay<?=$match['cluster'];?>.valve.net/570/<?=$match['match_id'];?>_<?=$match['replay_salt'];?>.dem.bz2</a>
+        <?else:?>Отсутствует<?endif;?>
+    </div>
 
 
     <div>
@@ -60,7 +55,11 @@
                 <td><?=$key;?></td>
                 <td><?=$val['account_id'];?></td>
                 <td><?=$val['player_slot'];?></td>
-                <td><?=$val['hero_id'];?></td>
+                <td><?=$dota->get_hero_url($val['hero_id']);?>
+                <video autoplay loop>
+                    <source src="/data/portraits/<?=$val['hero_id'];?>.webm" type='video/webm; codecs="vp8, vorbis"'  />
+    </video>
+                </td>
                 <td><?=$val['items'];?></td>
                 <td><?=$val['kills'];?></td>
                 <td><?=$val['deaths'];?></td>
@@ -98,7 +97,7 @@
     </tr>
     <?foreach($arr['matches'] AS $key =>$val):?>
     <tr>
-        <th><?=$key?></th>
+        <th><?=$key+1;?></th>
         <th><?=$val['match_id'];?></th>
         <th><?=$val['match_seq_num'];?></th>
         <th><?=$val['start_time'];?></th>
