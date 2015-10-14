@@ -1,4 +1,16 @@
 <div>
+
+    <style>
+        table.match th{background-color: #9999ff;padding:8px; text-align: center;}
+        table.match td{background-color: #ccccff; text-align: center; pargin:0px;margin:0px;}
+        tr.dire td{background-color:#8B7E7E;}
+        tr.radiant td{background-color:#C3CB90 ;}
+        table.match a{color:#231D6D;}
+        table.match a:hover{text-decoration:underline;}
+        table.match .leaver{color:#702F1A; font-size:80%;}
+        table.match th span{text-decoration:underline;text-decoration-style:dotted;}
+    </style>
+
     <div><b>Матч: <?=$match['match_id'];?></b></div>
     <div>
         <?if($match['radiant_win']):?>Победа света
@@ -24,45 +36,43 @@
         <?else:?>Отсутствует<?endif;?>
     </div>
 
-
     <div>
         Игроки
-        <table class='sys'>
+        <table class='match'>
             <tr>
-                <th>№</th>
-                <th>account_id</th>
-                <th>player_slot</th>
-                <th>hero_id</th>
-                <th>items</th>
-                <th>kills</th>
-                <th>deaths</th>
-                <th>assists</th>
-                <th>leaver_status</th>
-                <th>gold</th>
-                <th>last_hits</th>
-                <th>denies</th>
-                <th>gold_per_min</th>
-                <th>xp_per_min</th>
-                <th>gold_spent</th>
-                <th>hero_damage</th>
-                <th>tower_damage</th>
-                <th>hero_healing</th>
-                <th>level</th>
-                <th>ability_upgrades</th>
+                <th>&nbsp;</th>
+                <th>Игрок</th>
+                <th><span title="Уровень">Ур</span></th>
+                <th><span title="Убийств">Уб</span</th>
+                <th><span title="Смертей">См</span></th>
+                <th><span title="Помощь">П</span></th>
+                <th><span title="Золото">З</span></th>
+                <th><span title="Добито крипов">Lh</span></th>
+                <th><span title="Не отдал крипов">D</span></th>
+                <th><span title="Золота в минуту">З/м</span></th>
+                <th><span title="Опыта в минуту">О/м</span></th>
+                <th><span title="Золота потрачено">ЗП</span></th>
+                <th><span title="Нанесено урона вражеским героям">Ур.Г</span></th>
+                <th><span title="Нанесено урона башням">Ур.Б</span></th>
+                <th><span title="Исцеление героев">Исц</span></th>
+                <th>Прокачка навыков</th>
+                <th>Предметы</th>
             </tr>
             <?foreach($match['players'] AS $key =>$val):?>
-            <tr>
-                <td><?=$key;?></td>
-                <td><?=$val['account_id'];?></td>
-                <td><?=$val['player_slot'];?></td>
-                <td><?=$dota->get_hero_url($val['hero_id']);?>
-                    <img src='/data/portraits_png_50/<?=$val['hero_id'];?>.png' alt="<?=$dota->get_hero_url($val['hero_id']);?>"/>
+            <tr class='<?=($val['player_slot']<128)?'radiant':'dire';?>'>
+                <td>
+                    <img src='/data/portraits/png_50x25/<?=$val['hero_id'];?>.png' alt="<?=$dota->get_hero_url($val['hero_id']);?>"/>
+                         <!-- <video class="portrait" id="port<?=$val['hero_id'];?>" style="width:80px;" src="/data/portraits/webm/<?=$val['hero_id'];?>.webm" autoplay="autoplay" loop="loop"></video>
+                      !-->
                 </td>
-                <td><?=$val['items'];?></td>
+                <td>
+                    <?=($val['account_id']==4294967295)?'Скрыт':'<a href="/profile/'.$val['account_id'].'">'.$val['account_id'].'</a>';?>
+                    <?=$val['leaver_status']?'<div class="leaver">Покинул игру</div>':'';?>
+                </td> 
+                <td><?=$val['level'];?></td>
                 <td><?=$val['kills'];?></td>
                 <td><?=$val['deaths'];?></td>
                 <td><?=$val['assists'];?></td>
-                <td><?=$val['leaver_status'];?></td>
                 <td><?=$val['gold'];?></td>
                 <td><?=$val['last_hits'];?></td>
                 <td><?=$val['denies'];?></td>
@@ -72,8 +82,8 @@
                 <td><?=$val['hero_damage'];?></td>
                 <td><?=$val['tower_damage'];?></td>
                 <td><?=$val['hero_healing'];?></td>
-                <td><?=$val['level'];?></td>
                 <td><?=$val['ability_upgrades'];?></td>
+                <td><?=$val['items'];?></td>
             </tr>
             <?endforeach;?>
         </table>
