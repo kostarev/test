@@ -4,7 +4,7 @@
 
 class Dota extends CMS_System {
 
-    protected $heroes;
+    public $heroes, $items;
     static protected $instance = null;
 
     static public function me() {
@@ -16,7 +16,15 @@ class Dota extends CMS_System {
     protected function __construct() {
         parent::__construct();
         $res = $this->db->query("SELECT * FROM dota_heroes ORDER BY id;");
-        $this->heroes = $res->fetchAll();
+        $tmp = $res->fetchAll();
+        foreach ($tmp AS $arr) {
+            $this->heroes[$arr['id']] = $arr;
+        }
+        $res = $this->db->query("SELECT * FROM dota_items ORDER BY id;");
+        $tmp = $res->fetchAll();
+        foreach ($tmp AS $arr) {
+            $this->items[$arr['id']] = $arr;
+        }
     }
 
     function start() {
@@ -47,8 +55,19 @@ class Dota extends CMS_System {
         }
     }
 
+    function get_item_name($item_id) {
+        $item_id = (int) $item_id;
+        if (isset($this->items[$item_id])) {
+            return $this->items[$item_id]['localized_name'];
+        }
+    }
+
     function get_heroes() {
         return $this->heroes;
+    }
+
+    function get_items() {
+        return $this->items;
     }
 
     function get_heroes_by_api() {
@@ -57,6 +76,14 @@ class Dota extends CMS_System {
         $arr = json_decode($result, true);
         $heroes = $arr['result']['heroes'];
         return $heroes;
+    }
+
+    function get_items_by_api() {
+        $url = 'https://api.steampowered.com/IEconDOTA2_570/GetGameItems/V001/?key=' . API_KEY . '&language=Ru';
+        $result = file_get_contents($url);
+        $arr = json_decode($result, true);
+        $items = $arr['result']['items'];
+        return $items;
     }
 
 }

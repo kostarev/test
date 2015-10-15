@@ -9,6 +9,8 @@
         table.match a:hover{text-decoration:underline;}
         table.match .leaver{color:#702F1A; font-size:80%;}
         table.match th span{text-decoration:underline;text-decoration-style:dotted;}
+        table.match .hero_icon{width:50px;}
+        table.match .items img{width:50px;}
     </style>
 
     <div><b>Матч: <?=$match['match_id'];?></b></div>
@@ -61,9 +63,9 @@
             <?foreach($match['players'] AS $key =>$val):?>
             <tr class='<?=($val['player_slot']<128)?'radiant':'dire';?>'>
                 <td>
-                    <img src='/data/portraits/png_50x25/<?=$val['hero_id'];?>.png' alt="<?=$dota->get_hero_url($val['hero_id']);?>"/>
+                    <img class="hero_icon" src='/data/heroes/<?=$dota->heroes[$val['hero_id']]['title'];?>.png' alt="<?=$dota->get_hero_url($val['hero_id']);?>"/>
                          <!-- <video class="portrait" id="port<?=$val['hero_id'];?>" style="width:80px;" src="/data/portraits/webm/<?=$val['hero_id'];?>.webm" autoplay="autoplay" loop="loop"></video>
-                      !-->
+                            !-->
                 </td>
                 <td>
                     <?=($val['account_id']==4294967295)?'Скрыт':'<a href="/profile/'.$val['account_id'].'">'.$val['account_id'].'</a>';?>
@@ -83,8 +85,15 @@
                 <td><?=$val['tower_damage'];?></td>
                 <td><?=$val['hero_healing'];?></td>
                 <td><?=$val['ability_upgrades'];?></td>
-                <td><?=$val['items'];?></td>
+                <td class="items">
+                    <?for($i=0;$i<6;$i++):
+                    if(!$val['item_'.$i])continue;
+                    ?>
+                    <img src="/data/items/<?=$dota->items[$val['item_'.$i]]['title'];?>.png" title="<?=$dota->items[$val['item_'.$i]]['localized_name'];?>"/>
+                    <?endfor;?>
+                </td>
             </tr>
+            <tr><td colspan="17"><pre><?//print_r($val);?></pre></td></tr>
             <?endforeach;?>
         </table>
     </div>
