@@ -1,5 +1,7 @@
 <?php
 
+define("STEAM_ID_UPPER_32_BITS", "00000001000100000000000000000001");
+
 //https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?key=3FCAE426B6948F394EAE059B3DD96C12
 
 class Dota extends CMS_System {
@@ -38,7 +40,7 @@ class Dota extends CMS_System {
     function get_match_by_id($match_id) {
         $match_id = (int) $match_id;
         $url = 'https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails/V001/?match_id=' . $match_id . '&key=' . API_KEY;
-        $file = D . '/sys/cache/dota_match_' . $match_id . '.json';
+        $file = D . '/sys/cache/matches/' . $match_id . '.json';
         if (!is_file($file)) {
             $answer = file_get_contents($url);
             file_put_contents($file, $answer);
@@ -84,6 +86,127 @@ class Dota extends CMS_System {
         $arr = json_decode($result, true);
         $items = $arr['result']['items'];
         return $items;
+    }
+
+    function getAccountID($steam_id) {
+        $account_id = substr(decbin($steam_id), 32);
+        $account_id = bindec($account_id);
+        return $account_id;
+    }
+
+    function GET_32_BIT($ID_64) {
+        $upper = gmp_mul(bindec(STEAM_ID_UPPER_32_BITS), "4294967296");
+        return gmp_strval(gmp_sub($ID_64, $upper));
+    }
+
+    // creates a 64-bit steam id from the lower 32-bits
+    function MAKE_64_BIT($ID_32, $hi = false) {
+        if ($hi === false) {
+            $hi = bindec(STEAM_ID_UPPER_32_BITS);
+        }
+
+        // workaround signed/unsigned braindamage on x32
+        $hi = sprintf("%u", $hi);
+        $ID_32 = sprintf("%u", $ID_32);
+
+        return gmp_strval(gmp_add(gmp_mul($hi, "4294967296"), $ID_32));
+    }
+
+    function get_user_profile_xml($steam_id) {
+        if (strlen($steam_id) < 15) {
+            $steam_id = $this->MAKE_64_BIT($steam_id);
+        }
+        $file = D . '/sys/cache/users/' . $steam_id . '.xml';
+        if (!is_file($file)) {
+            $url = 'http://steamcommunity.com/profiles/' . $steam_id . '/?xml=1';
+            $xml = file_get_contents($url);
+            file_put_contents($file, $xml);
+        }
+        $profile = simplexml_load_file($file);
+        return $profile;
+    }
+
+    function get_user_profile($steam_id) {
+        if (strlen($steam_id) < 15) {
+            $steam_id = $this->MAKE_64_BIT($steam_id);
+        }
+
+        $url = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=' . API_KEY . '&steamids=' . $steam_id;
+        $file = D . '/sys/cache/users/' . $steam_id . '.json';
+        if (!is_file($file)) {
+            $result = file_get_contents($url);
+            file_put_contents($file, $result);
+        } else {
+            $result = file_get_contents($file);
+        }
+
+        $arr = json_decode($result, true);
+        $profile = $arr['response']['players'][0];
+        return $profile;
+    }
+
+    function get_user_profiles($steam_ids_array) {
+        $profiles = Array();
+        $urls = Array();
+        $files = Array();
+        foreach ($steam_ids_array AS $key => $steam_id) {
+            if (strlen($steam_id) < 15) {
+                $steam_id = $this->MAKE_64_BIT($steam_id);
+            }
+            $files[$key] = D . '/sys/cache/users/' . $steam_id . '.json';
+            if (is_file($files[$key])) {
+                $result = file_get_contents($files[$key]);
+                $arr = json_decode($result, true);
+                $profiles[$key] = $arr['response']['players'][0];
+            } else {
+                $urls[$key] = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=' . API_KEY . '&steamids=' . $steam_id;
+            }
+        }
+
+        if (!empty($urls)) {
+
+            foreach ($urls AS $key => $url) {
+                $ch[$key] = curl_init();
+                // устанавливаем URL и другие соответствующие опции
+                curl_setopt($ch[$key], CURLOPT_URL, $url);
+                curl_setopt($ch[$key], CURLOPT_HEADER, 0);
+                curl_setopt($ch[$key], CURLOPT_RETURNTRANSFER, 1);
+            }
+
+            //создаем набор дескрипторов cURL
+            $mh = curl_multi_init();
+
+            //добавляем дескрипторы
+            foreach ($ch AS $chanel) {
+                curl_multi_add_handle($mh, $chanel);
+            }
+
+            $active = null;
+            //запускаем дескрипторы
+            do {
+                $mrc = curl_multi_exec($mh, $active);
+            } while ($mrc == CURLM_CALL_MULTI_PERFORM);
+
+            while ($active && $mrc == CURLM_OK) {
+                do {
+                    $mrc = curl_multi_exec($mh, $active);
+                } while ($mrc == CURLM_CALL_MULTI_PERFORM);
+            }
+            //закрываем все дескрипторы
+            foreach ($ch AS $chanel) {
+                curl_multi_remove_handle($mh, $chanel);
+            }
+            curl_multi_close($mh);
+
+            //Получаем результаты
+            foreach ($ch AS $key => $chanel) {
+                $result = curl_multi_getcontent($chanel);
+                file_put_contents($files[$key], $result);
+                $arr = json_decode($result, true);
+                $profiles[$key] = $arr['response']['players'][0];
+            }
+        }
+        return $profiles;
     }
 
 }

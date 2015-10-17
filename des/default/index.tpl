@@ -68,7 +68,12 @@
                             !-->
                 </td>
                 <td>
-                    <?=($val['account_id']==4294967295)?'Скрыт':'<a href="/profile/'.$val['account_id'].'">'.$val['account_id'].'</a>';?>
+                    <?if($val['account_id']==4294967295):?>Скрыт<?else:?>
+                    <a href="/profile/<?=$val['account_id'];?>">
+                        <img src="<?=$val['profile']['avatar'];?>" alt="<?=$val['profile']['personaname'];?>" /><br />
+                        <?=$val['profile']['personaname'];?></a>
+                    <?endif;?>
+
                     <?=$val['leaver_status']?'<div class="leaver">Покинул игру</div>':'';?>
                 </td> 
                 <td><?=$val['level'];?></td>
