@@ -6,7 +6,7 @@ define("STEAM_ID_UPPER_32_BITS", "00000001000100000000000000000001");
 
 class Dota extends CMS_System {
 
-    public $heroes, $items;
+    public $heroes, $items, $spells;
     static protected $instance = null;
 
     static public function me() {
@@ -26,6 +26,11 @@ class Dota extends CMS_System {
         $tmp = $res->fetchAll();
         foreach ($tmp AS $arr) {
             $this->items[$arr['id']] = $arr;
+        }
+        $res = $this->db->query("SELECT * FROM dota_abilities ORDER BY id;");
+        $tmp = $res->fetchAll();
+        foreach ($tmp AS $arr) {
+            $this->spells[$arr['id']] = $arr;
         }
     }
 
@@ -70,6 +75,10 @@ class Dota extends CMS_System {
 
     function get_items() {
         return $this->items;
+    }
+    
+    function get_spells(){
+        return $this->spells;
     }
 
     function get_heroes_by_api() {

@@ -24,6 +24,8 @@ Class Controller_Index Extends Controller_Base {
             foreach ($profiles AS $key => $profile) {
                 $match['result']['players'][$key]['profile'] = $profile;
             }
+            
+            $this->des->set('spells',$dota->get_spells());
             $this->des->set('arr', $arr['result']);
             $this->des->set('match', $match['result']);
         }

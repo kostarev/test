@@ -89,7 +89,9 @@
                 <td><?=$val['hero_damage'];?></td>
                 <td><?=$val['tower_damage'];?></td>
                 <td><?=$val['hero_healing'];?></td>
-                <td><?=$val['ability_upgrades'];?></td>
+                <td>
+                    
+                </td>
                 <td class="items">
                     <?for($i=0;$i<6;$i++):
                     if(!$val['item_'.$i])continue;
@@ -98,7 +100,13 @@
                     <?endfor;?>
                 </td>
             </tr>
-            <tr><td colspan="17"><pre><?//print_r($val);?></pre></td></tr>
+            <tr><td colspan="17">
+                    <?foreach($val['ability_upgrades'] AS $abUp):?>
+                    <?=$spells[$abUp['ability']]['name'];?>
+                    <?=$abUp['time'];?>
+                    <?=$abUp['level'];?><br />
+                    <?endforeach;?>
+                    <pre><?//print_r($val);?></pre></td></tr>
             <?endforeach;?>
         </table>
     </div>
