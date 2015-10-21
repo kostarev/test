@@ -1,6 +1,7 @@
 <div>
 
     <style>
+        table.match {width:920px;}
         table.match th{background-color: #9999ff;padding:8px; text-align: center;}
         table.match td{background-color: #ccccff; text-align: center; pargin:0px;margin:0px;}
         tr.dire td{background-color:#8B7E7E;}
@@ -11,6 +12,9 @@
         table.match th span{text-decoration:underline;text-decoration-style:dotted;}
         table.match .hero_icon{width:50px;}
         table.match .items img{width:50px;}
+        table.match td.items {padding:0px;margin:0px;text-align:left;}
+        table.match td.spells img{width:30px;}
+        table.match td.spells{text-align:left;padding:0px;}
     </style>
 
     <div><b>Матч: <?=$match['match_id'];?></b></div>
@@ -57,7 +61,6 @@
                 <th><span title="Нанесено урона вражеским героям">Ур.Г</span></th>
                 <th><span title="Нанесено урона башням">Ур.Б</span></th>
                 <th><span title="Исцеление героев">Исц</span></th>
-                <th>Прокачка навыков</th>
                 <th>Предметы</th>
             </tr>
             <?foreach($match['players'] AS $key =>$val):?>
@@ -89,9 +92,6 @@
                 <td><?=$val['hero_damage'];?></td>
                 <td><?=$val['tower_damage'];?></td>
                 <td><?=$val['hero_healing'];?></td>
-                <td>
-                    
-                </td>
                 <td class="items">
                     <?for($i=0;$i<6;$i++):
                     if(!$val['item_'.$i])continue;
@@ -100,13 +100,11 @@
                     <?endfor;?>
                 </td>
             </tr>
-            <tr><td colspan="17">
+            <tr><td>&nbsp;</td><td class="spells" colspan="15">
                     <?foreach($val['ability_upgrades'] AS $abUp):?>
-                    <?=$spells[$abUp['ability']]['name'];?>
-                    <?=$abUp['time'];?>
-                    <?=$abUp['level'];?><br />
+                    <img alt="Level <?=$abUp['level'];?><><?=$spells[$abUp['ability']]['name'];?><>Time: <?=Func::sec2human($abUp['time']);?>" src="/data/spellicons/<?=$spells[$abUp['ability']]['icon'];?>.png" />
                     <?endforeach;?>
-                    <pre><?//print_r($val);?></pre></td></tr>
+                </td></tr>
             <?endforeach;?>
         </table>
     </div>
