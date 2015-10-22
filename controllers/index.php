@@ -25,6 +25,11 @@ Class Controller_Index Extends Controller_Base {
                 $match['result']['players'][$key]['profile'] = $profile;
             }
 
+            $match['result']['tower_radiant'] = decbin(32768+$match['result']['tower_status_radiant']);
+            $match['result']['tower_dire'] = decbin(32768+$match['result']['tower_status_dire']);
+            $match['result']['barak_radiant'] = decbin(128+$match['result']['barracks_status_radiant']);
+            $match['result']['barak_dire'] = decbin(128+$match['result']['barracks_status_dire']);
+            
             $this->des->set('spells', $dota->get_spells());
             $this->des->set('arr', $arr['result']);
             $this->des->set('match', $match['result']);

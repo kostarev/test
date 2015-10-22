@@ -1,7 +1,7 @@
 <div>
 
     <style>
-        table.match {width:920px;}
+        table.match {width:950px;}
         table.match th{background-color: #9999ff;padding:8px; text-align: center;}
         table.match td{background-color: #ccccff; text-align: center; pargin:0px;margin:0px;}
         tr.dire td{background-color:#8B7E7E;}
@@ -15,6 +15,15 @@
         table.match td.items {padding:0px;margin:0px;text-align:left;}
         table.match td.spells img{width:30px;}
         table.match td.spells{text-align:left;padding:0px;}
+        td.radiant {width:50px; height:50px;background-color:#73D56D;}
+        .tower_radiant{background-image: url(/data/img/tower_radiant.png);}
+        td.dire {width:50px; height:50px;background-color:#9A8D8D;}
+        .tower_dire{background-image: url(/data/img/tower_dire.png);}
+        td.river{width:20px; height:50px;background-color:#71CDEF;}
+        div.barak_radiant{width:50px;height:25px;background-image: url(/data/img/barak_radiant.png);padding:0px;margin:0px;}
+        div.barak_dire{width:50px;height:25px;background-image: url(/data/img/barak_dire.png);padding:0px;margin:0px;}
+        .tron_radiant{background: url(/data/img/tron_radiant.png) no-repeat;;}
+        .tron_dire{background: url(/data/img/tron_dire.png) no-repeat;}
     </style>
 
     <div><b>Матч: <?=$match['match_id'];?></b></div>
@@ -25,10 +34,76 @@
     <div>Длительность: <?=Func::sec2human($match['duration']);?></div>
     <div>Начало: <?=Func::unix2human($match['start_time']);?></div>
     <div>Конец: <?=Func::unix2human($match['start_time']+$match['duration']);?></div>
-    <div>tower_status_radiant: <?=$match['tower_status_radiant'];?></div>
-    <div>tower_status_dire: <?=$match['tower_status_dire'];?></div>
-    <div>barracks_status_radiant: <?=$match['barracks_status_radiant'];?></div>
-    <div>barracks_status_dire: <?=$match['barracks_status_dire'];?></div>
+
+    <div>
+
+        <table>
+            <tr>
+                <td class='radiant'>&nbsp;</td>
+                <td title='T4' class='radiant <?=$match['tower_radiant'][5]?'tower_radiant':'';?>'>&nbsp;</td>
+                <td class='radiant'>
+                    <div title='Барак' class='radiant <?=$match['barak_radiant'][7]?'barak_radiant':'';?>'>&nbsp;</div>
+                    <div title='Барак' class='radiant <?=$match['barak_radiant'][6]?'barak_radiant':'';?>'>&nbsp;</div>
+                </td>
+                <td title='T3' class='radiant <?=$match['tower_radiant'][13]?'tower_radiant':'';?>'>&nbsp;</td>
+                <td title='T2' class='radiant <?=$match['tower_radiant'][14]?'tower_radiant':'';?>'>&nbsp;</td>
+                <td title='T1' class='radiant <?=$match['tower_radiant'][15]?'tower_radiant':'';?>'>&nbsp;</td>
+                <td class='river'>&nbsp;</td>
+                <td title='T1' class='dire <?=$match['tower_dire'][15]?'tower_dire':'';?>'>&nbsp;</td>
+                <td title='T2' class='dire <?=$match['tower_dire'][14]?'tower_dire':'';?>'>&nbsp;</td>
+                <td title='T3' class='dire <?=$match['tower_dire'][13]?'tower_dire':'';?>'>&nbsp;</td>
+                <td class='dire'>
+                    <div title='Барак' class='dire <?=$match['barak_dire'][7]?'barak_dire':'';?>'>&nbsp;</div>
+                    <div title='Барак' class='dire <?=$match['barak_dire'][6]?'barak_dire':'';?>'>&nbsp;</div>
+                </td>
+                <td title='T4' class='dire <?=$match['tower_dire'][5]?'tower_dire':'';?>'>&nbsp;</td>
+                <td class='dire'>&nbsp;</td>
+            </tr>
+            <tr>
+                <td  title='Трон' class='radiant <?=$match['radiant_win']?'tron_radiant':'';?>'>&nbsp;</td>
+                <td class='radiant'>&nbsp;</td>
+                <td class='radiant'>
+                    <div title='Барак' class='radiant <?=$match['barak_radiant'][5]?'barak_radiant':'';?>'>&nbsp;</div>
+                    <div title='Барак' class='radiant <?=$match['barak_radiant'][4]?'barak_radiant':'';?>'>&nbsp;</div>
+                </td>
+                <td title='T3' class='radiant <?=$match['tower_radiant'][10]?'tower_radiant':'';?>'>&nbsp;</td>
+                <td title='T2' class='radiant <?=$match['tower_radiant'][11]?'tower_radiant':'';?>'>&nbsp;</td>
+                <td title='T1' class='radiant <?=$match['tower_radiant'][12]?'tower_radiant':'';?>'>&nbsp;</td>
+                <td class='river'>&nbsp;</td>
+                <td title='T1' class='dire <?=$match['tower_dire'][12]?'tower_dire':'';?>'>&nbsp;</td>
+                <td title='T2'class='dire <?=$match['tower_dire'][11]?'tower_dire':'';?>'>&nbsp;</td>
+                <td title='T3' class='dire <?=$match['tower_dire'][10]?'tower_dire':'';?>'>&nbsp;</td>
+                <td class='dire'>
+                    <div title='Барак' class='dire <?=$match['barak_dire'][5]?'barak_dire':'';?>'>&nbsp;</div>
+                    <div title='Барак' class='dire <?=$match['barak_dire'][4]?'barak_dire':'';?>'>&nbsp;</div>
+                </td>
+                <td class='dire'>&nbsp;</td>
+                <td title='Трон' class='dire <?=$match['radiant_win']?'':'tron_dire';?>'>&nbsp;</td>
+            </tr>
+            <tr>
+                <td class='radiant'>&nbsp;</td>
+                <td title='T4' class='radiant <?=$match['tower_radiant'][6]?'tower_radiant':'';?>'>&nbsp;</td>
+                <td class='radiant'>
+                    <div title='Барак' class='radiant <?=$match['barak_radiant'][3]?'barak_radiant':'';?>'>&nbsp;</div>
+                    <div title='Барак' class='radiant <?=$match['barak_radiant'][2]?'barak_radiant':'';?>'>&nbsp;</div>
+                </td>
+                <td title='T3' class='radiant <?=$match['tower_radiant'][7]?'tower_radiant':'';?>'>&nbsp;</td>
+                <td title='T2' class='radiant <?=$match['tower_radiant'][8]?'tower_radiant':'';?>'>&nbsp;</td>
+                <td title='T1' class='radiant <?=$match['tower_radiant'][9]?'tower_radiant':'';?>'>&nbsp;</td>
+                <td class='river'>&nbsp;</td>
+                <td title='T1' class='dire <?=$match['tower_dire'][9]?'tower_dire':'';?>'&nbsp;</td>
+                <td title='T2' class='dire <?=$match['tower_dire'][8]?'tower_dire':'';?>'>&nbsp;</td>
+                <td title='T3' class='dire <?=$match['tower_dire'][7]?'tower_dire':'';?>'>&nbsp;</td>
+                <td class='dire'>
+                    <div title='Барак' class='dire <?=$match['barak_dire'][3]?'barak_dire':'';?>'>&nbsp;</div>
+                    <div title='Барак' class='dire <?=$match['barak_dire'][2]?'barak_dire':'';?>'>&nbsp;</div>
+                </td>
+                <td title='T4' class='dire <?=$match['tower_dire'][6]?'tower_dire':''?>'>&nbsp;</td>
+                <td class='dire'>&nbsp;</td>
+            </tr>
+        </table>
+    </div>
+
     <div>cluster: <?=$match['cluster'];?></div>
     <div>first_blood_time: <?=$match['first_blood_time'];?></div>
     <div>lobby_type: <?=$match['lobby_type'];?></div>
