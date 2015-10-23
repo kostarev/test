@@ -17,20 +17,59 @@ class Dota extends CMS_System {
 
     protected function __construct() {
         parent::__construct();
-        $res = $this->db->query("SELECT * FROM dota_heroes ORDER BY id;");
+    }
+
+    function init_heroes($heroesArray) {
+        foreach ($heroesArray AS $key => $val) {
+            if (isset($this->heroes[$val])) {
+                unset($heroesArray[$key]);
+            }
+        }
+        if (empty($heroesArray)) {
+            return;
+        }
+        $in = str_repeat('?,', count($heroesArray) - 1) . '?';
+        $res = $this->db->prepare("SELECT * FROM dota_heroes WHERE id IN ($in) ORDER BY id;");
+        $res->execute($heroesArray);
         $tmp = $res->fetchAll();
         foreach ($tmp AS $arr) {
             $this->heroes[$arr['id']] = $arr;
         }
-        $res = $this->db->query("SELECT * FROM dota_items ORDER BY id;");
-        $tmp = $res->fetchAll();
-        foreach ($tmp AS $arr) {
-            $this->items[$arr['id']] = $arr;
+    }
+
+    function init_spells($spellsArray) {
+        foreach ($spellsArray AS $key => $val) {
+            if (isset($this->spells[$val])) {
+                unset($spellsArray[$key]);
+            }
         }
-        $res = $this->db->query("SELECT * FROM dota_abilities ORDER BY id;");
+        if (empty($spellsArray)) {
+            return;
+        }
+        $in = str_repeat('?,', count($spellsArray) - 1) . '?';
+        $res = $this->db->prepare("SELECT * FROM dota_abilities WHERE id IN ($in) ORDER BY id;");
+        $res->execute($spellsArray);
         $tmp = $res->fetchAll();
         foreach ($tmp AS $arr) {
             $this->spells[$arr['id']] = $arr;
+        }
+    }
+
+    function init_items($itemsArray) {
+        foreach ($itemsArray AS $key => $val) {
+            if (isset($this->items[$val])) {
+                unset($itemsArray[$key]);
+            }
+        }
+        if (empty($itemsArray)) {
+            return;
+        }
+        $in = str_repeat('?,', count($itemsArray) - 1) . '?';
+        $res = $this->db->prepare("SELECT * FROM dota_items WHERE id IN ($in) ORDER BY id;");
+        $res->execute($itemsArray);
+        $tmp = $res->fetchAll();
+        foreach ($tmp AS $arr) {
+            $this->items[$arr['id']] = $arr;
         }
     }
 
@@ -38,7 +77,6 @@ class Dota extends CMS_System {
         //$url = 'https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?key='.API_KEY;
         $url = D . '/sys/cache/dota.json';
         $answer = file_get_contents($url);
-
         return json_decode($answer, true);
     }
 
@@ -52,7 +90,31 @@ class Dota extends CMS_System {
         } else {
             $answer = file_get_contents($file);
         }
-        return json_decode($answer, true);
+        $arr = json_decode($answer, true);
+
+        $match = $arr['result'];
+
+        $heroes = Array();
+        $spells = Array();
+        $items = Array();
+
+        foreach ($match['players'] AS $val) {
+            $heroes[] = $val['hero_id'];
+            for ($i = 0; $i <= 5; $i++) {
+                if (isset($val['item_' . $i])) {
+                    $items[] = $val['item_' . $i];
+                }
+            }
+            foreach ($val['ability_upgrades'] AS $ab) {
+                $spells[] = $ab['ability'];
+            }
+        }
+
+        $this->init_heroes($heroes);
+        $this->init_spells($spells);
+        $this->init_items($items);
+
+        return $match;
     }
 
     function get_hero_url($hero_id) {
@@ -76,8 +138,8 @@ class Dota extends CMS_System {
     function get_items() {
         return $this->items;
     }
-    
-    function get_spells(){
+
+    function get_spells() {
         return $this->spells;
     }
 

@@ -175,7 +175,7 @@
                     <?endfor;?>
                 </td>
             </tr>
-            <tr><td>&nbsp;</td><td class="spells" colspan="15">
+            <tr class='<?=($val['player_slot']<128)?'radiant':'dire';?>'><td>&nbsp;</td><td class="spells" colspan="15">
                     <?foreach($val['ability_upgrades'] AS $abUp):?>
                     <img alt="Level <?=$abUp['level'];?><><?=$spells[$abUp['ability']]['name'];?><>Time: <?=Func::sec2human($abUp['time']);?>" src="/data/spellicons/<?=$spells[$abUp['ability']]['icon'];?>.png" />
                     <?endforeach;?>
