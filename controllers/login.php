@@ -17,9 +17,9 @@ Class Controller_login Extends Controller_Base {
         if (!$this->conf['reg']['on']) {
             $this->error('Регистрация закрыта');
         }
-        
-        
-                //Ajax Проверка занятости логина
+
+
+        //Ajax Проверка занятости логина
         if (isset($_POST['check_login'])) {
             $this->des->auto_head = false;
             //Длина логина
@@ -90,7 +90,7 @@ Class Controller_login Extends Controller_Base {
                     }
                 }
 
-                if (!empty($_POST['email']) AND !Func::valid_email($_POST['email'])) {
+                if (!empty($_POST['email']) AND ! Func::valid_email($_POST['email'])) {
                     $error[] = 'Не верно заполнено поле Email.';
                 }
             }
@@ -169,8 +169,16 @@ Class Controller_login Extends Controller_Base {
 
     public function index() {
 
-        //Авторизация---
+        if ($this->user['id']) {
+            $this->error('Вы уже авторизированы!');
+        }
+
+        //Авторизация через логин-пароль---
         if (isset($_POST['login'])) {
+            //Закрываем авторизацию по логину-паролю
+            $this->error('Авторизация возможна только через Steam');
+            
+            
             $this->des->set('title', 'Авторизация');
 
             try {
@@ -190,14 +198,38 @@ Class Controller_login Extends Controller_Base {
             }
         }
         //--------------
+        //Авторизация через OpenID
+        $openid = new LightOpenID(H);
+        if (!$openid->mode) {
+            $openid->identity = 'http://steamcommunity.com/openid';
+            $this->loc($openid->authUrl());
+        } elseif ($openid->mode == 'cancel') {
+            echo 'Авторизация отменена';
+        } else {
+            if (!$openid->validate()) {
+                $this->error('Ошибка авторизации');
+            }
+            $id = $openid->identity;
+            $ptn = "/^http:\/\/steamcommunity\.com\/openid\/id\/(7[0-9]{15,25}+)$/";
+            preg_match($ptn, $id, $matches);
+
+            $_SESSION['steamid'] = $matches[1];
+            $_SESSION['steam'] = Dota::me()->get_user_profile($_SESSION['steamid']);
+            $_SESSION['user_id'] = SiteWrite::me()->steamRegistrationUser($_SESSION['steamid'], $_SESSION['steam']['personaname']);
+            $this->loc(H);
+        }
 
 
-        $this->des->display('login');
+        //$this->des->display('login');
+        $this->des->display('_auth_form_steam');
     }
 
     //Выход -----------------
     function logout() {
         $_SESSION['user_id'] = 0;
+        $_SESSION['steamid'] = 0;
+        $_SESSION['steam'] = 0;
+        unset($_SESSION);
         setcookie('id', '', 0, '/');
         setcookie('p', '', 0, '/');
         $this->loc($this->back_url);
@@ -258,7 +290,7 @@ Class Controller_login Extends Controller_Base {
     function change_pass() {
         $this->des->set('change_pass', true);
         $this->des->set('title', 'Смена пароля');
-        
+
         if (!isset($this->args[0])) {
             $this->error('Не верная ссылка');
         }
@@ -286,8 +318,8 @@ Class Controller_login Extends Controller_Base {
             }
         }
         //----------------
-        
-        $this->des->set('user',$info);
+
+        $this->des->set('user', $info);
         $this->des->display('login');
     }
 

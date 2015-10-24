@@ -25,9 +25,14 @@
 
             <div>
                 <?if(!$this->user['id']):?>
-                <?$this->display('_auth_form');?>  
+                <?$this->display('_auth_form_steam');?>  
                 <?else:?>
-                <p><strong><?=$this->user['login'];?></strong> <?=$this->user['group_title'];?> [<a href="<?=H;?>/login/logout" >Выход</a>]</p>
+                <p>
+                    <img src="<?=$_SESSION['steam']['avatarmedium'];?>" alt='' style='float:left;'/>
+                    <strong><?=$this->user['name'];?></strong> <br />
+                    <?=$this->user['group_title'];?>  <br />
+                    [<a href="<?=H;?>/login/logout" >Выход</a>]
+                </p>
                 <?endif;?>
             </div>
 

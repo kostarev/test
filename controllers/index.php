@@ -5,7 +5,6 @@ Class Controller_Index Extends Controller_Base {
     function index() {
 
         $dota = Dota::me();
-        //$arr = $dota->start();
 
         if (isset($this->args[0])) {
             $match_id = (int) $this->args[0];

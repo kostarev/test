@@ -1,21 +1,22 @@
 <?php
 
 Class SiteWrite extends CMS_System {
-    
-      //Одиночка паттерн------
+
+    //Одиночка паттерн------
     static protected $instance = null;
+
     //Метод предоставляет доступ к объекту
-    static public function me(){
+    static public function me() {
         if (is_null(self::$instance))
             self::$instance = new SiteWrite();
         return self::$instance;
     }
-    
+
     protected function __construct() {
         parent::__construct();
     }
-    //------------------------
 
+    //------------------------
     //Сохранение настроек----
     function save_conf($mother, $name, $value) {
         $res = $this->db->prepare("UPDATE config SET value=? WHERE mother=? AND name=?;");
@@ -73,7 +74,7 @@ Class SiteWrite extends CMS_System {
         $email = !empty($arr['email']) ? $arr['email'] : '';
 
         //Валидация данных--------
-        if ($email AND !Func::valid_email($email)) {
+        if ($email AND ! Func::valid_email($email)) {
             throw new Exception('Не верный адре электронной почты.');
         }
 
@@ -160,6 +161,23 @@ Class SiteWrite extends CMS_System {
         return Array('id' => $id, 'pas' => $md5pas, 'email' => $email, 'login' => $login);
     }
 
+    function steamRegistrationUser($steamId, $name) {
+        $res = $this->db->prepare("SELECT id FROM users WHERE steamId=?;");
+        $res->execute(Array($steamId));
+        if (!$row = $res->fetch()) {
+            $res = $this->db->prepare("INSERT INTO users (steamId,reg_time,name) VALUES (?,UNIX_TIMESTAMP(),?);");
+            if (!$res->execute(Array($steamId, $name))) {
+                throw new Exception($this->db->errorInfo());
+            }
+            $id = $this->db->lastInsertId();
+        } else {
+            $id = $row['id'];
+            $res = $this->db->prepare("UPDATE users SET name=? WHERE id=?;");
+            $res->execute(Array($name, $id));
+        }
+        return $id;
+    }
+
     function email_confirm($code) {
         $res = $this->db->prepare("SELECT * FROM tmp_users WHERE code=?;");
         $res->execute(Array($code));
@@ -218,8 +236,7 @@ Class SiteWrite extends CMS_System {
     }
 
     //--------------------------
-    
-        //Добавление действия
+    //Добавление действия
     function action_add($name, $title) {
         if ($name AND $title) {
             $res = $this->db->prepare("SELECT name FROM actions WHERE name=?;");
@@ -231,12 +248,13 @@ Class SiteWrite extends CMS_System {
             }
         }
     }
-    
+
     //Удаление действия
-    function action_del($name){
+    function action_del($name) {
         $res = $this->db->prepare("DELETE FROM actions WHERE name=?;");
         $res->execute(Array($name));
     }
+
 }
 
 ?>

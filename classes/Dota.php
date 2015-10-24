@@ -74,7 +74,7 @@ class Dota extends CMS_System {
     }
 
     function start() {
-        //$url = 'https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?key='.API_KEY;
+        //$url = 'https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?key='.STEAM_API_KEY;
         $url = D . '/sys/cache/dota.json';
         $answer = file_get_contents($url);
         return json_decode($answer, true);
@@ -82,7 +82,7 @@ class Dota extends CMS_System {
 
     function get_match_by_id($match_id) {
         $match_id = (int) $match_id;
-        $url = 'https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails/V001/?match_id=' . $match_id . '&key=' . API_KEY;
+        $url = 'https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails/V001/?match_id=' . $match_id . '&key=' . STEAM_API_KEY;
         $file = D . '/sys/cache/matches/' . $match_id . '.json';
         if (!is_file($file)) {
             $answer = file_get_contents($url);
@@ -144,7 +144,7 @@ class Dota extends CMS_System {
     }
 
     function get_heroes_by_api() {
-        $url = 'https://api.steampowered.com/IEconDOTA2_570/GetHeroes/v0001/?key=' . API_KEY;
+        $url = 'https://api.steampowered.com/IEconDOTA2_570/GetHeroes/v0001/?key='.STEAM_API_KEY;
         $result = file_get_contents($url);
         $arr = json_decode($result, true);
         $heroes = $arr['result']['heroes'];
@@ -152,7 +152,7 @@ class Dota extends CMS_System {
     }
 
     function get_items_by_api() {
-        $url = 'https://api.steampowered.com/IEconDOTA2_570/GetGameItems/V001/?key=' . API_KEY . '&language=Ru';
+        $url = 'https://api.steampowered.com/IEconDOTA2_570/GetGameItems/V001/?key=' . STEAM_API_KEY . '&language=Ru';
         $result = file_get_contents($url);
         $arr = json_decode($result, true);
         $items = $arr['result']['items'];
@@ -202,7 +202,7 @@ class Dota extends CMS_System {
             $steam_id = $this->MAKE_64_BIT($steam_id);
         }
 
-        $url = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=' . API_KEY . '&steamids=' . $steam_id;
+        $url = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=' . STEAM_API_KEY . '&steamids=' . $steam_id;
         $file = D . '/sys/cache/users/' . $steam_id . '.json';
         if (!is_file($file)) {
             $result = file_get_contents($url);
@@ -230,7 +230,7 @@ class Dota extends CMS_System {
                 $arr = json_decode($result, true);
                 $profiles[$key] = $arr['response']['players'][0];
             } else {
-                $urls[$key] = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=' . API_KEY . '&steamids=' . $steam_id;
+                $urls[$key] = 'http://api.steampowered.com/ISteamUser/GetPlayerSSTEAM_API_KEYs/v0002/?key=' . API_KEY . '&steamids=' . $steam_id;
             }
         }
 
