@@ -5,37 +5,26 @@ Class Controller_Index Extends Controller_Base {
     function index() {
 
         $dota = Dota::me();
+        if ($this->user['id']) {
+            $arr['account_id'] = $this->user['steamid'];
+            $arr['matches_requested'] = 5;
+            $history = $dota->get_match_history($arr);
 
-        if (isset($this->args[0])) {
-            $match_id = (int) $this->args[0];
-        }
-
-        if (!empty($match_id)) {
-            $steam_ids_array = Array();
-            $match = $dota->get_match_by_id($match_id);
-            foreach ($match['players'] AS $key => $player) {
-                if ($player['account_id'] == 4294967295) {
-                    continue;
+            $heroes = Array();
+            foreach ($history['matches'] AS $match) {
+                foreach ($match['players'] AS $player) {
+                    if (Dota::me()->MAKE_64_BIT($player['account_id']) == $this->user['steamid']) {
+                        $heroes[] = $player['hero_id'];
+                    }
                 }
-                $steam_ids_array[$key] = $player['account_id'];
-            }
-            $profiles = $dota->get_user_profiles($steam_ids_array);
-            foreach ($profiles AS $key => $profile) {
-                $match['players'][$key]['profile'] = $profile;
             }
 
-            $match['tower_radiant'] = decbin(32768 + $match['tower_status_radiant']);
-            $match['tower_dire'] = decbin(32768 + $match['tower_status_dire']);
-            $match['barak_radiant'] = decbin(128 + $match['barracks_status_radiant']);
-            $match['barak_dire'] = decbin(128 + $match['barracks_status_dire']);
+            $dota->init_heroes($heroes);
 
-            $this->des->set('spells', $dota->get_spells());
-            //$this->des->set('arr', $arr['result']);
-            $this->des->set('match', $match);
+            $this->des->set('dota', $dota);
+            $this->des->set('history', $history);
+            $this->des->display('index');
         }
-
-        $this->des->set('dota', $dota);
-        $this->des->display('index');
     }
 
 }
